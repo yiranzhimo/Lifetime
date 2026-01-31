@@ -108,9 +108,24 @@ export function useStorage() {
     setSyncing(true);
     try {
       const data = exportData();
-      const sha = loadData('githubFileSha') as string | null;
       
-      await putGitHubFile(config, data, sha || undefined, `Update life tracker data - ${new Date().toISOString()}`);
+      // 先获取最新的文件信息，以确保使用最新的 SHA
+      // 这样可以避免 SHA 不匹配的错误
+      let sha: string | undefined;
+      try {
+        const fileInfo = await getGitHubFile(config);
+        if (fileInfo?.sha) {
+          sha = fileInfo.sha;
+        }
+      } catch (error: any) {
+        // 如果文件不存在（404），sha 保持为 undefined，将创建新文件
+        // 其他错误会在下面的 putGitHubFile 中处理
+        if (error.message && !error.message.includes('404')) {
+          console.warn('Warning: Could not get current file SHA, will try to create/update anyway:', error);
+        }
+      }
+      
+      await putGitHubFile(config, data, sha, `Update life tracker data - ${new Date().toISOString()}`);
       
       // 获取新的 SHA（需要重新获取文件信息）
       const fileInfo = await getGitHubFile(config);
