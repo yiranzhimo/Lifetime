@@ -11,6 +11,37 @@ export interface GitHubConfig {
   branch?: string;    // 分支名，默认为 'main'
 }
 
+/**
+ * 从当前 URL 自动检测 GitHub 仓库信息
+ * 适用于 GitHub Pages 部署
+ */
+export function detectGitHubRepoFromURL(): { owner: string; repo: string } | null {
+  if (typeof window === 'undefined') return null;
+  
+  try {
+    const hostname = window.location.hostname;
+    const pathname = window.location.pathname;
+    
+    // GitHub Pages 格式 1: username.github.io/repo-name
+    // 例如: yiranzhimo.github.io/Lifetime
+    const githubIoMatch = hostname.match(/^([^.]+)\.github\.io$/);
+    if (githubIoMatch) {
+      const owner = githubIoMatch[1];
+      // 从 pathname 提取仓库名（去掉开头的 /）
+      const repo = pathname.split('/').filter(Boolean)[0] || owner;
+      return { owner, repo };
+    }
+    
+    // GitHub Pages 格式 2: 自定义域名（无法自动检测）
+    // 返回 null，需要手动配置
+    
+    return null;
+  } catch (error) {
+    console.error('Error detecting GitHub repo:', error);
+    return null;
+  }
+}
+
 export interface GitHubFileContent {
   content: string;
   sha?: string;       // 文件 SHA，用于更新文件

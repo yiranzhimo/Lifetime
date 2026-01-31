@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useStorage } from '@/hooks/useStorage';
-import { GitHubConfig, validateGitHubConfig } from '@/utils/githubSync';
+import { GitHubConfig, validateGitHubConfig, detectGitHubRepoFromURL } from '@/utils/githubSync';
 
 export default function DataManager() {
   const {
@@ -20,14 +20,29 @@ export default function DataManager() {
   
   // GitHub 配置状态
   const [showGitHubConfig, setShowGitHubConfig] = useState(false);
+  
+  // 自动检测当前仓库
+  const detectedRepo = detectGitHubRepoFromURL();
+  
   const [githubForm, setGitHubForm] = useState<GitHubConfig>({
-    owner: githubConfig?.owner || '',
-    repo: githubConfig?.repo || '',
+    owner: githubConfig?.owner || detectedRepo?.owner || '',
+    repo: githubConfig?.repo || detectedRepo?.repo || '',
     path: githubConfig?.path || 'data/life-tracker.json',
     token: githubConfig?.token || '',
     branch: githubConfig?.branch || 'main',
   });
   const [validating, setValidating] = useState(false);
+
+  // 如果检测到仓库且未配置，自动填充
+  useEffect(() => {
+    if (detectedRepo && !githubConfig) {
+      setGitHubForm(prev => ({
+        ...prev,
+        owner: prev.owner || detectedRepo.owner,
+        repo: prev.repo || detectedRepo.repo,
+      }));
+    }
+  }, [detectedRepo, githubConfig]);
 
   const handleExport = () => {
     const data = exportData();
@@ -157,6 +172,16 @@ export default function DataManager() {
 
           {showGitHubConfig && (
             <div className="space-y-3 p-4 bg-gray-50 rounded">
+              {detectedRepo && !githubConfig && (
+                <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded">
+                  <p className="text-sm text-blue-800">
+                    💡 已自动检测到当前仓库：<strong>{detectedRepo.owner}/{detectedRepo.repo}</strong>
+                    <br />
+                    <span className="text-xs text-blue-600">只需填写 Token 即可开始使用</span>
+                  </p>
+                </div>
+              )}
+              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   GitHub 用户名/组织
@@ -165,9 +190,12 @@ export default function DataManager() {
                   type="text"
                   value={githubForm.owner}
                   onChange={(e) => setGitHubForm({ ...githubForm, owner: e.target.value })}
-                  placeholder="your-username"
+                  placeholder={detectedRepo?.owner || "your-username"}
                   className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
+                {detectedRepo && !githubConfig && (
+                  <p className="text-xs text-gray-500 mt-1">已自动填充当前仓库信息</p>
+                )}
               </div>
 
               <div>
@@ -178,9 +206,12 @@ export default function DataManager() {
                   type="text"
                   value={githubForm.repo}
                   onChange={(e) => setGitHubForm({ ...githubForm, repo: e.target.value })}
-                  placeholder="your-repo"
+                  placeholder={detectedRepo?.repo || "your-repo"}
                   className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
+                {detectedRepo && !githubConfig && (
+                  <p className="text-xs text-gray-500 mt-1">已自动填充当前仓库信息</p>
+                )}
               </div>
 
               <div>
