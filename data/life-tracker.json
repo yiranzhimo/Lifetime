@@ -4,6 +4,14 @@
     "lifeExpectancy": 80
   },
   "wishLists": null,
-  "dailyRecords": null,
-  "exportDate": "2026-01-31T13:39:30.018Z"
+  "dailyRecords": [
+    {
+      "id": "b4c5fd0f-8b26-4f95-86f1-290561f87f2c",
+      "date": "2026-01-31",
+      "content": "测试一下",
+      "tags": [],
+      "createdAt": "2026-01-31T13:39:40.336Z"
+    }
+  ],
+  "exportDate": "2026-01-31T13:39:40.336Z"
 }
