@@ -3,15 +3,39 @@
     "birthday": "1998-09-29",
     "lifeExpectancy": 80
   },
-  "wishLists": null,
+  "wishLists": [
+    {
+      "id": "57682c59-33a2-48ad-9eed-22e3ebc89e1a",
+      "name": "梦想清单",
+      "items": [
+        {
+          "id": "0633e70e-87ef-4f2e-81c7-185f9c3a3409",
+          "title": "测试",
+          "completed": false,
+          "tags": [],
+          "records": [],
+          "createdAt": "2026-01-31T13:40:18.153Z"
+        },
+        {
+          "id": "112aeff1-0a30-47d2-bf05-68f12e7815cd",
+          "title": "测试 2",
+          "completed": false,
+          "tags": [],
+          "records": [],
+          "createdAt": "2026-01-31T13:45:49.906Z"
+        }
+      ],
+      "createdAt": "2026-01-31T13:40:14.505Z"
+    }
+  ],
   "dailyRecords": [
     {
       "id": "b4c5fd0f-8b26-4f95-86f1-290561f87f2c",
       "date": "2026-01-31",
-      "content": "测试一下",
+      "content": "测试一下1",
       "tags": [],
       "createdAt": "2026-01-31T13:39:40.336Z"
     }
   ],
-  "exportDate": "2026-01-31T13:39:40.336Z"
+  "exportDate": "2026-01-31T13:50:06.938Z"
 }
